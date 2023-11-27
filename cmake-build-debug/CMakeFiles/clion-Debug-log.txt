@@ -1,1 +1,0 @@
-CMakeLists.txt not found in /mnt/hdd/projects/Quicky Select CMakeLists.txt
