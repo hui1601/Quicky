@@ -41,3 +41,11 @@ func (c *Client) Connect() error {
 	}
 	return nil
 }
+
+func (c *Client) Disconnect() error {
+	err := c.Device.Disconnect()
+	if err != nil {
+		return err
+	}
+	return nil
+}
