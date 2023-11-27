@@ -1,4 +1,4 @@
-package gatt
+package device
 
 import (
 	"github.com/muka/go-bluetooth/bluez/profile/adapter"
