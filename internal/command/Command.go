@@ -30,21 +30,11 @@ func (c *Command) PackPacket() []byte {
 }
 
 func ParsePacket(packet []byte) (*Command, error) {
-	ErrInvalidPacket := errors.New("invalid packet")
-	if len(packet) < 3 {
-		return nil, ErrInvalidPacket
+	if len(packet) < 3 || packet[0] != 0xff || len(packet) != int(packet[1])+2 {
+		return nil, errors.New("invalid packet")
 	}
-	if packet[0] != 0xff {
-		return nil, ErrInvalidPacket
-	}
-	bodyLength := int(packet[1])
-	if len(packet) != bodyLength+2 {
-		return nil, ErrInvalidPacket
-	}
-	operationCode := int(packet[2])
-	parameters := packet[3:]
 	return &Command{
-		OperationCode: operationCode,
-		Parameters:    parameters,
+		OperationCode: int(packet[2]),
+		Parameters:    packet[4:],
 	}, nil
 }
