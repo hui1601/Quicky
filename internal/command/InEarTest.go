@@ -1,7 +1,7 @@
 package command
 
 func NewInEarTestCommand(isOn bool) *Command {
-	var arg byte = 0x00
+	var arg byte = 0x02
 	if isOn {
 		arg = 0x01
 	}
