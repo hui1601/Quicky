@@ -7,4 +7,5 @@ QCY bluetooth earphone utility for linux
 
 If you want general use, it's better to make it yourself.
 
-## Docs
+## Protocol Documentation
+[LINK](docs/protocol.md)
