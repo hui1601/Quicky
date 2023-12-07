@@ -11,5 +11,12 @@ The control MAC address is broadcast after connecting to either side and receivi
 
 However, it also worked if I just connected to the device and then disconnected the device (that's a bad idea, but I couldn't find a Dbus API to disconnect the L2CAP connection in Bluez)
 
-## Cmd
+## Command
 
+| 1byte | 1byte  | ...  |
+|-------|--------|------|
+| cmd   | length | data |
+
+cmd is 1 byte, length is 1 byte, and data is length bytes.
+
+command is sent with service uuid `00001001-0000-1000-8000-00805f9b34fb`.
