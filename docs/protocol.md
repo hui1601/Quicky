@@ -20,3 +20,7 @@ However, it also worked if I just connected to the device and then disconnected 
 cmd is 1 byte, length is 1 byte, and data is length bytes.
 
 command is sent with service uuid `00001001-0000-1000-8000-00805f9b34fb`.
+
+### Command List
+| cmd | description | data length | data |
+|-----|-------------|-------------|------|
