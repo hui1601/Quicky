@@ -22,5 +22,8 @@ cmd is 1 byte, length is 1 byte, and data is length bytes.
 command is sent with service uuid `00001001-0000-1000-8000-00805f9b34fb`.
 
 ### Command List
-| cmd | description | data length | data |
-|-----|-------------|-------------|------|
+| cmd  | description   | data length | data |
+|------|---------------|-------------|------|
+| 0x01 | Reset Default | 0           |      |
+| 0x02 | Reset Pairing | 0           |      |
+| 0x03 | Factory Reset | 0           |      |
