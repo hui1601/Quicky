@@ -61,3 +61,6 @@ command is sent with service uuid `00001001-0000-1000-8000-00805f9b34fb`.
 | 0x31 | Working Environment ANC Mode(Level 1) |
 | 0x32 | Working Environment ANC Mode(Level 2) |
 | 0x33 | Working Environment ANC Mode(Level 3) |
+| 0x41 | Noise Environment ANC Mode(Level 1)   |
+| 0x42 | Noise Environment ANC Mode(Level 2)   |
+| 0x43 | Noise Environment ANC Mode(Level 3)   |
