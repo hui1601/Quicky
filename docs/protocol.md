@@ -50,3 +50,11 @@ command is sent with service uuid `00001001-0000-1000-8000-00805f9b34fb`.
 | 0x18 | Rename Earphone | (String length) | String                                                    |
 | 0x19 | Audio Language  | (String length) | String                                                    |
 
+#### Noise Cancel Mode
+| Mode | Description                          |
+|------|--------------------------------------|
+| 0x00 | OFF                                  |
+| 0x1? | Unknown                              |
+| 0x21 | Silent Environment ANC Mode(Level 1) |
+| 0x22 | Silent Environment ANC Mode(Level 2) |
+| 0x23 | Silent Environment ANC Mode(Level 3) |
