@@ -64,3 +64,10 @@ command is sent with service uuid `00001001-0000-1000-8000-00805f9b34fb`.
 | 0x41 | Noise Environment ANC Mode(Level 1)   |
 | 0x42 | Noise Environment ANC Mode(Level 2)   |
 | 0x43 | Noise Environment ANC Mode(Level 3)   |
+| 0xa1 | Transparency Mode(Level 1)            |
+| 0xa2 | Transparency Mode(Level 2)            |
+| 0xa3 | Transparency Mode(Level 3)            |
+| 0xa4 | Transparency Mode(Level 4)            |
+| 0xa5 | Transparency Mode(Level 5)            |
+| 0xa6 | Transparency Mode(Level 6)            |
+| 0xa7 | Transparency Mode(Increase Voice)     |
