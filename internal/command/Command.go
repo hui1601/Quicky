@@ -3,38 +3,54 @@ package command
 import "errors"
 
 type Command struct {
-	OperationCode int
+	OperationCode byte
 	Parameters    []byte
 }
 
-func NewCommand(operationCode int, parameters []byte) *Command {
+func NewCommand(opcode byte, parameters []byte) *Command {
 	return &Command{
-		OperationCode: operationCode,
+		OperationCode: opcode,
 		Parameters:    parameters,
 	}
 }
 
 func (c *Command) PackPacket() []byte {
-	var packet []byte
-	var body []byte
-	body = append(body, byte(c.OperationCode))
-	body = append(body, byte(len(c.Parameters)))
+	body := []byte{c.OperationCode, byte(len(c.Parameters))}
 	body = append(body, c.Parameters...)
-	// packet prefix
-	packet = append(packet, 0xff)
-	// body length
-	packet = append(packet, byte(len(body)))
-	// body
+	packet := []byte{0xff, byte(len(body))}
 	packet = append(packet, body...)
 	return packet
 }
 
-func ParsePacket(packet []byte) (*Command, error) {
-	if len(packet) < 3 || packet[0] != 0xff || len(packet) != int(packet[1])+2 {
-		return nil, errors.New("invalid packet")
+func ParsePacket(packet []byte) ([]Command, error) {
+	if len(packet) < 4 || packet[0] != 0xff {
+		return nil, errors.New("invalid packet: too short or missing SOF")
 	}
-	return &Command{
-		OperationCode: int(packet[2]),
-		Parameters:    packet[4:],
-	}, nil
+	bodyLen := int(packet[1])
+	if bodyLen+2 != len(packet) {
+		return nil, errors.New("invalid packet: body length mismatch")
+	}
+
+	var commands []Command
+	offset := 2
+	for offset < len(packet) {
+		if offset+2 > len(packet) {
+			return nil, errors.New("invalid packet: truncated command block")
+		}
+		cmdId := packet[offset]
+		paramLen := int(packet[offset+1])
+		offset += 2
+		if offset+paramLen > len(packet) {
+			return nil, errors.New("invalid packet: truncated parameters")
+		}
+		params := make([]byte, paramLen)
+		copy(params, packet[offset:offset+paramLen])
+		commands = append(commands, Command{OperationCode: cmdId, Parameters: params})
+		offset += paramLen
+	}
+
+	if len(commands) == 0 {
+		return nil, errors.New("invalid packet: no commands found")
+	}
+	return commands, nil
 }

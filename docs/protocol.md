@@ -14,6 +14,51 @@ The control MAC address is broadcast after connecting to either side and receivi
 
 However, it also works if you just connect to the device and then disconnect (not ideal, but a workaround when no direct L2CAP disconnect API is available).
 
+## Device Discovery
+
+QCY devices are discovered via BLE scanning by filtering on **manufacturer data CompanyID `0x521c`**.
+
+The scan does **not** filter by service UUID or device name — only by manufacturer data.
+
+### Scan Filter
+
+Set a BLE scan filter for manufacturer data with CompanyID `0x521c` (QCY). A secondary CompanyID `0x05D6` exists for QCY watches but can be ignored for earphones.
+
+### Manufacturer Data Format
+
+When a scan result contains manufacturer data for CompanyID `0x521c` with at least 20 bytes, the following fields can be parsed:
+
+| Byte Offset | Field          | Encoding                                                         |
+|-------------|----------------|------------------------------------------------------------------|
+| 0–1         | vendorId       | Big-endian 16-bit: `data[0] << 8 | data[1]`                     |
+| 3           | colorIndex     | `(data[3] & 0x18) >> 1`                                         |
+| 5           | leftBattery    | Bits 0–6: battery % (0–100). Bit 7: 1 = charging                |
+| 6           | rightBattery   | Bits 0–6: battery % (0–100). Bit 7: 1 = charging                |
+| 7           | boxBattery     | Bits 0–6: battery % (0–100). Bit 7: 1 = charging                |
+| 11–16       | controlMAC     | Classic Bluetooth MAC for control connections (scrambled order)   |
+| 18–23       | otherMAC       | Other earbud MAC address (scrambled order)                       |
+
+### MAC Address Byte Order
+
+MAC addresses in the manufacturer data use a **scrambled byte order**, not sequential:
+
+| MAC Field  | Byte Indices (within manufacturer data) | Format String Order              |
+|------------|----------------------------------------|----------------------------------|
+| controlMAC | 11, 12, 13, 14, 15, 16                | `[12]:[11]:[13]:[16]:[15]:[14]`  |
+| otherMAC   | 18, 19, 20, 21, 22, 23                | `[19]:[18]:[20]:[23]:[22]:[21]`  |
+
+If `otherMAC` resolves to `00:00:00:00:00:00`, it should be treated as identical to `controlMAC`.
+
+### Three MAC Addresses
+
+| MAC        | Source                    | Purpose                              |
+|------------|---------------------------|--------------------------------------|
+| bleMac     | BLE scan result address   | The advertising BLE address          |
+| controlMAC | Manufacturer data [11–16] | Classic BT MAC for GATT connection   |
+| otherMAC   | Manufacturer data [18–23] | The other earbud's MAC               |
+
+24 bytes of manufacturer data are required for full MAC parsing. With only 20 bytes, battery and vendorId are still available.
+
 ## Packet Format
 
 All commands sent via the main command characteristic (`00001001`) and all responses received via the notification characteristic (`00001002`) share the same framing:
