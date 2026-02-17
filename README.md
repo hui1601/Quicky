@@ -37,6 +37,13 @@ func main() {
 				result.Advertisement.RightBattery,
 				result.Advertisement.BoxBattery)
 			fmt.Printf("  Control MAC: %s\n", result.Advertisement.ControlMAC)
+			
+			if product, ok := result.GetProductInfo(); ok {
+				fmt.Printf("  Model: %s\n", product.Title)
+				if product.Features.ANC != nil {
+					fmt.Printf("    ANC: %d modes\n", len(product.Features.ANC.Modes))
+				}
+			}
 		}
 	})
 }
@@ -86,6 +93,7 @@ go func() {
 ## Features
 
 - **Discovery** — Scan for QCY devices via BLE manufacturer data (CompanyID `0x521c`), parse battery levels, charging state, and MAC addresses from advertisements
+- **Model identification** — Embedded product database (199 models) maps vendorId to model name and supported features (ANC, EQ, etc.)
 - **40+ commands** — Noise cancellation, EQ (v1/v2/per-channel), key function mapping, LED effects, spatial audio, wearing detection, alarms, music control, and more
 - **Event stream** — Async notification handling with typed event parsing
 - **Direct reads** — Battery and firmware version via characteristic reads

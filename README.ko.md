@@ -37,6 +37,13 @@ func main() {
 				result.Advertisement.RightBattery,
 				result.Advertisement.BoxBattery)
 			fmt.Printf("  제어 MAC: %s\n", result.Advertisement.ControlMAC)
+			
+			if product, ok := result.GetProductInfo(); ok {
+				fmt.Printf("  모델: %s\n", product.Title)
+				if product.Features.ANC != nil {
+					fmt.Printf("    ANC: %d개 모드\n", len(product.Features.ANC.Modes))
+				}
+			}
 		}
 	})
 }
@@ -86,6 +93,7 @@ go func() {
 ## 기능
 
 - **디바이스 탐색** — BLE 제조사 데이터(CompanyID `0x521c`)로 QCY 기기 스캔, 광고 패킷에서 배터리 잔량, 충전 상태, MAC 주소 파싱
+- **모델 식별** — vendorId를 모델명 및 지원 기능(ANC, EQ 등)에 매핑하는 내장 제품 데이터베이스(199개 모델)
 - **40개 이상의 명령** — 노이즈 캔슬링, EQ (v1/v2/채널별), 키 기능 매핑, LED 효과, 공간 음향, 착용 감지, 알람, 음악 제어 등
 - **이벤트 스트림** — 타입이 지정된 이벤트 파싱을 통한 비동기 알림 처리
 - **직접 읽기** — 특성(Characteristic) 읽기를 통한 배터리 및 펌웨어 버전 확인

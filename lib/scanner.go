@@ -2,17 +2,26 @@ package quicky
 
 import (
 	"github.com/hui1601/Quicky/internal/discovery"
+	"github.com/hui1601/Quicky/internal/product"
 	"github.com/hui1601/Quicky/internal/utils"
 	"tinygo.org/x/bluetooth"
 )
 
 type AdvertisementInfo = utils.AdvertisementInfo
+type Product = product.Product
 
 type ScanResult struct {
 	Address       bluetooth.Address
 	RSSI          int16
 	Name          string
 	Advertisement *AdvertisementInfo
+}
+
+func (r ScanResult) GetProductInfo() (*Product, bool) {
+	if r.Advertisement == nil {
+		return nil, false
+	}
+	return product.Lookup(r.Advertisement.VendorID)
 }
 
 type Scanner struct {

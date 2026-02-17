@@ -59,6 +59,53 @@ If `otherMAC` resolves to `00:00:00:00:00:00`, it should be treated as identical
 
 24 bytes of manufacturer data are required for full MAC parsing. With only 20 bytes, battery and vendorId are still available.
 
+## Model Identification
+
+QCY earphones **do not report** their model name or supported features via BLE characteristics. Model identification is achieved by mapping the **vendorId** (from manufacturer data bytes 0–1) to a product database.
+
+### Product Database
+
+The Quicky library includes an embedded product database (199 products) fetched from the official QCY server API. Each product entry contains:
+
+- **vendorId** — Unique 16-bit identifier broadcast in manufacturer data
+- **title** — Model name (e.g., "QCY HT16 MeloBuds")
+- **subTitle** — Full model designation (e.g., "QCY-HT16")
+- **features** — Supported capabilities:
+  - **ANC** — Noise cancellation modes (if supported)
+  - **EQ** — Equalizer bands and presets
+  - **Key function** — Customizable touch controls
+  - **Channel balance** — Left/right audio balance adjustment
+  - **Find earphone** — Location tracking
+  - **Device name** — Renaming support
+  - **Auto-off timer** — Scheduled power-off
+
+### Usage
+
+```go
+scanner := quicky.NewScanner()
+scanner.Scan(func(result quicky.ScanResult) {
+    if product, ok := result.GetProductInfo(); ok {
+        fmt.Printf("Model: %s\n", product.Title)
+        if product.Features.ANC != nil {
+            fmt.Printf("  ANC modes: %d\n", len(product.Features.ANC.Modes))
+        }
+        if product.Features.EQ != nil {
+            fmt.Printf("  EQ: %d bands\n", product.Features.EQ.Bands)
+        }
+    }
+})
+```
+
+### Server API (for updates)
+
+The product database can be updated using the Python script in `scripts/dump_products.py`:
+
+```bash
+python3 scripts/dump_products.py --output-dir scripts/output
+```
+
+This fetches the latest product list from `https://api.watch.qcy.com/product/findProductList` and control panel definitions for each model.
+
 ## Packet Format
 
 All commands sent via the main command characteristic (`00001001`) and all responses received via the notification characteristic (`00001002`) share the same framing:
